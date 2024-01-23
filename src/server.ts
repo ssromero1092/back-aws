@@ -1,21 +1,27 @@
 // backend/src/server.ts
 import express from 'express';
-import bodyParser from 'body-parser';
 import cors from 'cors';
-import { getTodos, createTodo, updateTodo, deleteTodo } from './controllers/todoController';
+import * as dotenv from 'dotenv';
+import todoRoutes from './routes/todoRoutes';
+
+dotenv.config();
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
+const ruta = process.env.RUTA || '/' ;
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Rutas para CRUD de todos
-app.get('/todos', getTodos);
-app.post('/todos', createTodo);
-app.put('/todos/:id', updateTodo);
-app.delete('/todos/:id', deleteTodo);
+// Utiliza las rutas definidas en todoRoutes
+app.use(ruta, todoRoutes);
 
 app.listen(port, () => {
-  console.log(`Servidor corriendo en  http://localhost:${port}`);
+  console.log(`Servidor corriendo en http://localhost:${port}`);
 });
+
+
+
+
+

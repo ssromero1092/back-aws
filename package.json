@@ -16,6 +16,7 @@
     "@types/express": "^4.17.21",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
+    "dotenv": "^16.3.2",
     "express-http-to-https": "^1.1.4",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.3.3"
