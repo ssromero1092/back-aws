@@ -25,3 +25,43 @@ jobs:
 
     - name: Run tests
       run: npm test
+
+    deploy:
+  needs: build-and-test
+  runs-on: ubuntu-latest
+  steps:
+  - uses: actions/checkout@v2
+    with:
+      node-version: '14'
+
+  - name: Set up Node.js
+    uses: actions/setup-node@v2
+    with:
+      node-version: '14'
+  
+  - name: Install dependencies
+    run: npm install
+
+  - name: Build
+    run: npm run build
+
+  - name: Configure AWS credentials
+    uses: aws-actions/configure-aws-credentials@v1
+    with:
+      node-version: '20'
+      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      aws-region: us-east-1
+
+  - name: Install AWS CLI
+    run: |
+      sudo apt-get update
+      sudo apt-get install -y awscli
+
+  - name: Copy files to EC2
+    run: |
+      scp -r -i node.pem back-aws node.pem ubuntu@18.188.216.166:back/back-aws
+
+  - name: SSH into EC2 and deploy
+    run: |
+     ssh -i node.pem ubuntu@18.188.216.166 "cd back/back-aws && npm install && npm run build && npm run dev"
