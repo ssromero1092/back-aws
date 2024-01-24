@@ -60,7 +60,10 @@ jobs:
 
       - name: Copy files to EC2
         run: |
-          scp -r -i node.pem back-aws ubuntu@18.188.216.166:~/back/back-aws
+          echo ${{ secrets.EC2_SSH_KEY_B64 }} | base64 --decode > key.pem
+          scp -i key.pem back-aws ubuntu@18.188.216.166:~/back/back-aws
+        env:
+          EC2_SSH_KEY_B64: ${{ secrets.EC2_SSH_KEY_B64 }}
 
       - name: SSH into EC2 and deploy
         run: |
